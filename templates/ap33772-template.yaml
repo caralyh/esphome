@@ -1,0 +1,86 @@
+substitutions:
+  name: "ap33772-board-template"
+  friendly_name: "AP33772 Board Template"
+
+esphome:
+  name: "${name}"
+  friendly_name: "${friendly_name}"
+  name_add_mac_suffix: true
+
+  project:
+    name: caralyh.ap33772-board-template
+    version: "1.0"
+
+# fix for logger from luar123
+external_components:
+  - source: github://luar123/esphome@fix_logger
+    components: [logger]
+    refresh: never
+  - source: github://caralyh/esphome@ap33772
+    components: [ap33772]
+
+logger:
+api:
+ota:
+
+dashboard_import:
+  package_import_url: github://caralyh/esphome/templates/ap33772-template.yaml@ap33772
+  import_full_config: true
+
+wifi:
+  ap: {}
+
+captive_portal:
+
+esp32:
+  board: esp32-c6-devkitc-1
+  flash_size: 8MB
+  variant: esp32c6
+  framework:
+    type: esp-idf
+    version: "5.2.1"
+    platform_version: 6.6.0
+    sdkconfig_options:
+      CONFIG_OPENTHREAD_ENABLED: n
+      CONFIG_ENABLE_WIFI_STATION: y
+      CONFIG_USE_MINIMAL_MDNS: y
+      CONFIG_ESPTOOLPY_FLASHSIZE_8MB: y
+
+i2c:
+  sda: GPIO6
+  scl: GPIO7
+  scan: true
+  id: i2c_bus
+  frequency: 400kHz
+  sda_pullup_enabled: false
+  scl_pullup_enabled: false
+
+ap33772:
+
+button:
+  - platform: ap33772
+    reset:
+      name: "PD Reset"
+    clear:
+      name: "PD Clear"
+    negotiate:
+      name: "PD Negotiate"
+
+text_sensor:
+  - platform: ap33772
+    current_pdo:
+      name: "Selected PDO"
+    available_pdos:
+      name: "Available PDOs"
+
+number:
+  - platform: ap33772
+    voltage:
+      name: PD Request Voltage
+      restore_value: false
+    current:
+      name: PD Request Current
+      restore_value: false
+    max_current:
+      name: PD Request Max Current
+      restore_value: false
